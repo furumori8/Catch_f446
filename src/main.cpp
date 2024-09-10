@@ -2,15 +2,16 @@
 #include "RogiLinkFlex/UartLink.hpp"
 #include "catch24/pid_controller.cpp"
 
-UartLink uart1(USBTX, USBRX, 115200, nullptr, 1);
+UartLink uart1(USBTX, USBRX, 115200, nullptr, 0);
 
 UartLinkSubscriber<float> sub(uart1, 2);
 UartLinkPublisher<float> pub(uart1, 2);
 
 void sub_callback(float a) {
   pub.publish(a);
-  printf("Received: %f\n", a);
+  //printf("Received: %f\n", a);
 }
+
 float goal_r = 0.4;
 float goal_theta = 1.5;
 float goal_z = 0.3;
@@ -26,8 +27,8 @@ PIDController pid_theta(0.001, 0.0, 0.0, 10.0);
 PIDController pid_z(0.001, 0.0, 0.0, 10.0);
 
 int main() {
+  sub.set_callback(sub_callback);
   while(1) {
-    sub.set_callback(sub_callback);
     next_r = measured_r + pid_r.update(goal_r, measured_r);
     next_theta = measured_theta + pid_theta.update(goal_theta, measured_theta);
     next_z = measured_z + pid_z.update(goal_z, measured_z);    
