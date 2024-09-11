@@ -4,8 +4,10 @@
 
 UartLink uart1(USBTX, USBRX, 115200, nullptr, 0);
 
-UartLinkSubscriber<float> sub(uart1, 2);
-UartLinkPublisher<float> pub(uart1, 2);
+UartLinkSubscriber<float, float> sub(uart1, 1);
+UartLinkSubscriber<uint8_t, uint8_t> sub2(uart1, 2);
+UartLinkSubscriber<uint8_t> sub3(uart1, 3);
+UartLinkPublisher<float, float> pub(uart1, 1);
 
 void sub_callback(float a) {
   pub.publish(a);
@@ -32,7 +34,7 @@ int main() {
     next_r = measured_r + pid_r.update(goal_r, measured_r);
     next_theta = measured_theta + pid_theta.update(goal_theta, measured_theta);
     next_z = measured_z + pid_z.update(goal_z, measured_z);    
-    printf("r: %d, theta: %d, z: %d\n", int(100*next_r), int(100*next_theta), int(100*next_z));
+    // printf("r: %d, theta: %d, z: %d\n", int(100*next_r), int(100*next_theta), int(100*next_z));
     measured_r = next_r;
     measured_theta = next_theta;
     measured_z = next_z;
